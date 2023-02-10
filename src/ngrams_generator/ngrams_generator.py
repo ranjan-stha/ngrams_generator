@@ -106,7 +106,8 @@ class NGramsGenerator:
         return " ".join(entry_tokens)
 
 
-    def get_ngrams(self,
+    def get_ngrams(
+        self,
         entries: List[str],
         n: int=1
     ):
@@ -116,7 +117,7 @@ class NGramsGenerator:
         ngrams_flat_lst = [item for sublist in ngrams_lst for item in sublist]
         return Counter(ngrams_flat_lst).most_common(self.max_ngrams_items)
 
-    def process_entries(
+    def __call__(
         self,
         entries: List[str]
     ):
