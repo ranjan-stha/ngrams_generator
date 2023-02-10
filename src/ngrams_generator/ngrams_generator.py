@@ -152,10 +152,3 @@ class NGramsGenerator:
             })
 
         return ngrams
-
-if __name__ == "__main__":
-    lst = ["This is an example", "This is another example"]
-    obj = NGramsGenerator(enable_stemming=False)
-    print(obj.process_entries(lst))
-
-
