@@ -17,7 +17,7 @@ setup(
         "console_scripts": [
             "download-pkgs = ngrams_generator:download_pkgs",
         ]
-    }
+    },
     version="0.1",
     license="MIT",
     long_description=open("README.md").read(),
