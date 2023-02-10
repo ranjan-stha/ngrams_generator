@@ -1,15 +1,18 @@
 import string
 import nltk
+import logging
 
 from nltk.util import ngrams
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from nltk.stem.snowball import EnglishStemmer, FrenchStemmer, SpanishStemmer
+from nltk.stem.snowball import EnglishStemmer, FrenchStemmer, SpanishStemmer, ArabicStemmer, PortugueseStemmer
 
 from collections import Counter, OrderedDict
 from langdetect import detect
 
 from typing import List, Dict
+
+logging.getLogger().setLevel(logging.INFO)
 
 class NGramsGenerator:
     def __init__(self,
@@ -21,13 +24,17 @@ class NGramsGenerator:
         enable_stemming: bool=True,
         enable_case_sensitive: bool=True
     ):
+        self.stopwords_ar = stopwords.words("arabic")
         self.stopwords_en = stopwords.words("english")
         self.stopwords_fr = stopwords.words("french")
         self.stopwords_es = stopwords.words("spanish")
+        self.stopwords_pt = stopwords.words("portuguese")
 
+        stemmer_ar = ArabicStemmer()
         stemmer_en = EnglishStemmer()
         stemmer_fr = FrenchStemmer()
         stemmer_es = SpanishStemmer()
+        stemmer_pt = PortugueseStemmer()
 
         self.max_ngrams_items = max_ngrams_items
         self.generate_unigrams = generate_unigrams
@@ -37,33 +44,51 @@ class NGramsGenerator:
         self.enable_stemming = enable_stemming
         self.enable_case_sensitive = enable_case_sensitive
 
+        self.allowed_languages = ["ar", "en", "fr", "es", "pt"]
+
         self.language_mapper = {
+            "ar": "arabic",
             "en": "english",
             "fr": "french",
-            "es": "spanish"
+            "es": "spanish",
+            "pt": "portuguese"
         }
 
-        language_stopwords_mapper = {
-            "en": self.stopwords_en,
-            "fr": self.stopwords_fr,
-            "es": self.stopwords_es
+        language_fn_mapper = {
+            "ar": {
+                "stopwords": self.stopwords_ar,
+                "stemmer": stemmer_ar
+            },
+            "en": {
+                "stopwords": self.stopwords_en,
+                "stemmer": stemmer_en
+            },
+            "fr": {
+                "stopwords": self.stopwords_fr,
+                "stemmer": stemmer_fr
+            },
+            "es": {
+                "stopwords": self.stopwords_es,
+                "stemmer": stemmer_es
+            },
+            "pt": {
+                "stopwords": self.stopwords_pt,
+                "stemmer": stemmer_pt
+            }
         }
 
-        language_stemmer_mapper = {
-            "en": stemmer_en,
-            "fr": stemmer_fr,
-            "es": stemmer_es
-        }
-
-        self.fn_stopwords = lambda tokens, lang: [w for w in tokens if w not in language_stopwords_mapper[lang]]
-        self.fn_stemmer = lambda tokens, lang: [language_stemmer_mapper[lang].stem(w) for w in tokens]
+        self.fn_stopwords = lambda tokens, lang: [w for w in tokens if w not in language_fn_mapper[lang]["stopwords"]]
+        self.fn_stemmer = lambda tokens, lang: [language_fn_mapper[lang]["stemmer"].stem(w) for w in tokens]
     
     def detect_language(self, entry: str)->str:
         try:
-            return detect(entry)
+            lang = detect(entry)
+            if lang not in self.allowed_languages:
+                logging.warning(f"{lang} not found in allowed languages. Using english(en) instead.")
+                return "en"
+            return lang
         except Exception as e:
-            # use logger
-            print(f"{e} Using default language as english")
+            logging.warning(f"{e} Using english(en) instead.")
         return "en"
     
     def clean_entry(
