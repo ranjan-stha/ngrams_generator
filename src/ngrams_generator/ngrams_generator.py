@@ -5,7 +5,13 @@ import logging
 from nltk.util import ngrams
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from nltk.stem.snowball import EnglishStemmer, FrenchStemmer, SpanishStemmer, ArabicStemmer, PortugueseStemmer
+from nltk.stem.snowball import (
+    EnglishStemmer,
+    FrenchStemmer,
+    SpanishStemmer,
+    ArabicStemmer,
+    PortugueseStemmer
+)
 
 from collections import Counter, OrderedDict
 from langdetect import detect
