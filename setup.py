@@ -13,6 +13,11 @@ setup(
         "nltk>=3.8.1",
         "langdetect==1.0.9"
     ],
+    entry_points={
+        "console_scripts": [
+            "download-pkgs = ngrams_generator:download_pkgs",
+        ]
+    }
     version="0.1",
     license="MIT",
     long_description=open("README.md").read(),

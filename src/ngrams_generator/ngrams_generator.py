@@ -10,7 +10,7 @@ from nltk.stem.snowball import EnglishStemmer, FrenchStemmer, SpanishStemmer
 from collections import Counter, OrderedDict
 from langdetect import detect
 
-from typing import List
+from typing import List, Dict
 
 nltk.download('stopwords')
 
@@ -77,7 +77,7 @@ class NGramsGenerator:
         self.fn_stopwords = lambda tokens, lang: [w for w in tokens if w not in language_stopwords_mapper[lang]]
         self.fn_stemmer = lambda tokens, lang: [language_stemmer_mapper[lang].stem(w) for w in tokens]
     
-    def detect_language(self, entry: str):
+    def detect_language(self, entry: str)->str:
         try:
             return detect(entry)
         except Exception as e:
@@ -120,7 +120,7 @@ class NGramsGenerator:
     def __call__(
         self,
         entries: List[str]
-    ):
+    )->Dict[str, Dict]:
         ngrams = dict()
         processed_entries = list()
         for entry in entries:
