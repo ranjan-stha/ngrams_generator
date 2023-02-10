@@ -12,24 +12,6 @@ from langdetect import detect
 
 from typing import List, Dict
 
-nltk.download('stopwords')
-
-"""
-Sample request body payload (stringify the payload)
-{
-    "entries": ["entry1", "entry2"],
-    "ngrams": {
-        "unigrams": true,
-        "bigrams": true,
-        "trigrams": true
-    },
-    "enable_stopwords": false,
-    "enable_stemming": true,
-    "enable_case_sensitive": false
-    "max_ngrams_items": 10
-}
-"""
-
 class NGramsGenerator:
     def __init__(self,
         max_ngrams_items: int=10,
